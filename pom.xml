@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>br.com.fiap.bank</groupId>
+    <artifactId>fiap-esp-cp5-ddd-java</artifactId>
+    <version>1.0.0-SNAPSHOT</version>
+    <packaging>pom</packaging>
+
+    <name>FIAP Bank - Esteira de Credito (Monorepo Aggregator)</name>
+    <description>
+        POM agregador do monorepo da Esteira de Credito. Aglutina as tres aplicacoes
+        Spring Boot do ecossistema (Core Bancario, Plataforma de Credito e Mesa de
+        Operacoes) para fins de carregamento no IDE e build conjunto. Nao e parent
+        dos modulos filhos: cada aplicacao continua herdando diretamente de
+        spring-boot-starter-parent.
+    </description>
+
+    <modules>
+        <module>fiap-bank-core-bancario</module>
+        <module>fiap-bank-plataforma-credito</module>
+        <module>fiap-bank-mesa-operacoes-credito</module>
+    </modules>
+
+</project>
