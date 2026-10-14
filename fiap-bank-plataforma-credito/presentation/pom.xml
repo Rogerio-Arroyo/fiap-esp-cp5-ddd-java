@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>br.com.fiap.bank</groupId>
+        <artifactId>fiap-bank-plataforma-credito</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>fiap-bank-plataforma-credito-presentation</artifactId>
+    <packaging>jar</packaging>
+
+    <name>FIAP Bank - Plataforma de Credito - Presentation</name>
+    <description>
+        Ponto de entrada RESTful da Plataforma de Credito: classe principal Spring Boot,
+        Controllers RESTful, Controller Adaptador de retrocompatibilidade com os front-ends
+        legados (Mesa de Operacoes e Internet Banking Mobile) e tratamento global de excecoes.
+    </description>
+
+    <dependencies>
+        <dependency>
+            <groupId>br.com.fiap.bank</groupId>
+            <artifactId>fiap-bank-plataforma-credito-application</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-web</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-actuator</artifactId>
+        </dependency>
+
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+                Regra de Arquitetura: o modulo "presentation" so pode enxergar "application".
+                Proibido depender diretamente de "domain" ou "infrastructure" (acesso apenas transitivo).
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-presentation-boundaries</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <searchTransitive>false</searchTransitive>
+                                    <excludes>
+                                        <exclude>br.com.fiap.bank:fiap-bank-plataforma-credito-domain</exclude>
+                                        <exclude>br.com.fiap.bank:fiap-bank-plataforma-credito-infrastructure</exclude>
+                                    </excludes>
+                                    <message>
+                                        O modulo "presentation" deve enxergar exclusivamente o modulo "application".
+                                        Dependencia direta de "domain" ou "infrastructure" viola a hierarquia Maven.
+                                    </message>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+
+            <!-- Produz o JAR executavel (fat-jar) da Plataforma de Credito -->
+            <plugin>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-maven-plugin</artifactId>
+                <configuration>
+                    <mainClass>br.com.fiap.bank.plataforma.PlataformaCreditoApplication</mainClass>
+                </configuration>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>repackage</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
