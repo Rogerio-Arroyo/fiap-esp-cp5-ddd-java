@@ -2,6 +2,15 @@
 
 Monorepo contendo o ecossistema completo da **Esteira de Crédito** do FIAP Bank, composto por quatro aplicações integradas: Core Bancário, Plataforma de Crédito, Mesa de Operações e Internet Banking Mobile.
 
+> ## Checkpoint 5 — DDD Java
+> **Disciplina:** Domain-Driven Design - Java | **Turma:** 2ESPH
+>
+> | RM | Nome Completo |
+> | :--- | :--- |
+> | RM563517 | Rogério Cruz Arroyo |
+>
+> Trabalho individual (sem formação de grupo). As respostas da **Avaliação Teórica** (Seção 5 do Checkpoint) estão em [`/docs/avaliacao-teorica.md`](./docs/avaliacao-teorica.md).
+
 ---
 
 ## 📁 Estrutura do Workspace e Documentação
@@ -34,13 +43,14 @@ mvn -pl fiap-bank-core-bancario-presentation spring-boot:run
 ---
 
 ### 2. Iniciar a Plataforma de Crédito (`Porta 8081`)
-Motor de decisão e esteira, integrado via Spring Cloud OpenFeign ao Core Bancário.
+Motor de decisão e esteira, integrado via Spring Cloud OpenFeign ao Core Bancário. Também em DDD Multi-Módulo.
 ```bash
 cd fiap-bank-plataforma-credito
-mvn clean compile
-mvn spring-boot:run
+mvn clean package -DskipTests
+java -jar presentation/target/fiap-bank-plataforma-credito-presentation-1.0.0-SNAPSHOT.jar
 ```
-- API Base: `http://localhost:8081/api/credito`
+- API RESTful (novo recurso): `http://localhost:8081/api/v1/solicitacoes-credito`
+- API Legada (retrocompatibilidade com Mesa/Mobile): `http://localhost:8081/api/credito`
 - H2 Console: `http://localhost:8081/h2-console`
 
 ---
@@ -69,8 +79,16 @@ npm run start
 
 ## 🧪 Dados Pré-Carregados para Testes
 
-Os serviços iniciam automaticamente com dados pré-populados para testes:
+O Core Bancário e a Plataforma de Crédito iniciam automaticamente com dados pré-populados e **coerentes entre si** (mesmos CPFs, matematicamente válidos — ver Value Object `Cpf` do domínio):
 
-- **Cliente 1 (Aprovável):** CPF `12345678900` | Nome: Ana Silva | Renda: R$ 7.500,00 | Saldo: R$ 12.500,00
-- **Cliente 2 (Aprovável):** CPF `98765432100` | Nome: Carlos Eduardo Oliveira | Renda: R$ 12.000,00 | Saldo: R$ 45.800,50
-- **Cliente 3 (Reprovado SCR):** CPF `55544433399` | Nome: Mariana Souza | Restrição ativa no SCR
+- **Cliente 1 (Aprovável):** CPF `111.222.333-96` | Nome: Ana Silva | Renda: R$ 7.500,00 | Saldo: R$ 12.500,00
+- **Cliente 2 (Aprovável):** CPF `987.654.321-00` | Nome: Carlos Eduardo Oliveira | Renda: R$ 12.000,00 | Saldo: R$ 48.000,00
+- **Cliente 3 (Reprovado SCR):** CPF `444.555.666-19` | Nome: Mariana Souza | Restrição ativa no SCR (CPF terminado em `9`) | Saldo: R$ 3.200,00
+
+> O app Mobile usa `111.222.333-96` (Ana Silva) como CPF padrão pré-preenchido na simulação de crédito.
+
+---
+
+## 🏛️ Arquitetura (resumo)
+
+`fiap-bank-core-bancario` e `fiap-bank-plataforma-credito` seguem **Domain-Driven Design** com **Maven Multi-Módulo**, isolando `domain` (puro, sem Spring/JPA) → `infrastructure` (JPA, Feign, adapters) → `application` (DTOs validados + casos de uso) → `presentation` (Controllers RESTful + tratamento global de exceções). A hierarquia de dependências é validada em tempo de build pelo `maven-enforcer-plugin`. Detalhes completos em cada README de módulo.

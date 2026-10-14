@@ -10,7 +10,7 @@ A comunicação com a **Plataforma de Crédito** é realizada de forma declarati
 
 - **Java 21**
 - **Spring Boot 4.1**
-- **Spring Cloud OpenFeign 2024.0.0**
+- **Spring Cloud OpenFeign 2025.1.3**
 - **Thymeleaf** (renderização server-side de templates HTML)
 - **Spring Web**
 - **Maven**
