@@ -19,7 +19,7 @@ export class AppComponent implements OnInit {
   feedbackType: 'success' | 'warning' | 'error' = 'success';
 
   // Customer State
-  cpfCliente: string = '12345678900';
+  cpfCliente: string = '11122233396';
   nomeCliente: string = 'Ana Silva';
   rendaMensal: number = 7500;
 
