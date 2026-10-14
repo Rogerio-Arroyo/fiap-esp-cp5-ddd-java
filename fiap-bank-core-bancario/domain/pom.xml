@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <parent>
+        <groupId>br.com.fiap.bank</groupId>
+        <artifactId>fiap-bank-core-bancario</artifactId>
+        <version>1.0.0-SNAPSHOT</version>
+    </parent>
+
+    <artifactId>fiap-bank-core-bancario-domain</artifactId>
+    <packaging>jar</packaging>
+
+    <name>FIAP Bank - Core Bancario - Domain</name>
+    <description>
+        Modulo de dominio puro (Entidades, Value Objects, Interfaces de Repositorio).
+        NAO pode conter Spring Web, Spring Data JPA ou anotacoes de persistencia relacional.
+    </description>
+
+    <dependencies>
+        <!-- Lombok eh apenas um processador de anotacoes em tempo de compilacao: nao adiciona
+             nenhum framework ao classpath de runtime do dominio. -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <optional>true</optional>
+        </dependency>
+
+        <dependency>
+            <groupId>org.junit.jupiter</groupId>
+            <artifactId>junit-jupiter</artifactId>
+            <scope>test</scope>
+        </dependency>
+    </dependencies>
+
+    <build>
+        <plugins>
+            <!--
+                Isolamento de Dominio Puro (Regra 2): falha o build caso qualquer dependencia
+                de framework web, persistencia relacional (JPA/Hibernate) ou Spring em geral
+                seja declarada diretamente neste modulo.
+            -->
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <executions>
+                    <execution>
+                        <id>enforce-domain-purity</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <bannedDependencies>
+                                    <searchTransitive>false</searchTransitive>
+                                    <excludes>
+                                        <exclude>org.springframework:*</exclude>
+                                        <exclude>org.springframework.boot:*</exclude>
+                                        <exclude>org.springframework.data:*</exclude>
+                                        <exclude>jakarta.persistence:*</exclude>
+                                        <exclude>org.hibernate:*</exclude>
+                                        <exclude>org.hibernate.orm:*</exclude>
+                                        <exclude>com.h2database:*</exclude>
+                                        <exclude>br.com.fiap.bank:fiap-bank-core-bancario-infrastructure</exclude>
+                                        <exclude>br.com.fiap.bank:fiap-bank-core-bancario-application</exclude>
+                                        <exclude>br.com.fiap.bank:fiap-bank-core-bancario-presentation</exclude>
+                                    </excludes>
+                                    <message>
+                                        O modulo "domain" deve permanecer estritamente puro: proibido depender de
+                                        Spring Web, Spring Data JPA, anotacoes de persistencia relacional ou de
+                                        qualquer outra camada (infrastructure/application/presentation).
+                                    </message>
+                                </bannedDependencies>
+                            </rules>
+                            <fail>true</fail>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+
+</project>
